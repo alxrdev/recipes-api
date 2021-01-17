@@ -20,6 +20,24 @@ class UsersRepository implements IUsersRepository
     }
 
     /**
+     * Return an user by email
+     * 
+     * @param string $email User email
+     * @throws AppError
+     * @return User $user
+     */
+    public function getByEmail(string $email) : User
+    {
+        $user = $this->model->where('email', $email);
+
+        if ($user == null) {
+            throw new ApiException('Something went wrong :(', 'User not found.', 404);
+        }
+
+        return $user;
+    }
+
+    /**
      * Method that creates a new user
      * 
      * @param array $fields User fields
@@ -28,11 +46,10 @@ class UsersRepository implements IUsersRepository
      */
     public function create($fields) : User
     {
-        try {
-            $user = $this->model->create($fields);
-            return $user;
-        } catch (Exception $err) {
-            throw new ApiException($err->getMessage(), 'We have an internal server error.');
+        if ($this->model->where('email', $fields['email']) !== null) {
+            throw new ApiException('The given data was invalid.', ['email' => 'The email has already been taken.'], 400);
         }
+
+        return $this->model->create($fields);
     }
 }

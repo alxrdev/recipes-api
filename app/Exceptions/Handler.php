@@ -2,11 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Traits\ApiResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponse;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -36,5 +39,12 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof ApiException) {
+            return $this->failure('Something went wrong :(', $e->getErrorDetails(), $e->getStatusCode());
+        }
     }
 }

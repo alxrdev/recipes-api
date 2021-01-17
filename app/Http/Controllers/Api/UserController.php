@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\ApiException;
 use App\Http\Requests\Users\CreateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\Users\CreateUserService;
 use App\Services\Users\Interfaces\ICreateUserService;
-use Exception;
 use Illuminate\Http\Request;
 
 class UserController extends ApiController
@@ -40,12 +40,8 @@ class UserController extends ApiController
      */
     public function store(CreateUserRequest $request)
     {
-        try {
-            $user = $this->createUserService->execute($request->all());
-            return $this->success('User created successfully.', new UserResource($user), 201);
-        } catch (Exception $err) {
-            return $this->failure('Error on user creation.', $err->getMessage(), 500);
-        }
+        $user = $this->createUserService->execute($request->all());
+        return $this->success('User created successfully.', new UserResource($user), 201);
     }
 
     /**

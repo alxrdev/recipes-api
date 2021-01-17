@@ -2,15 +2,17 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Exceptions\ApiException;
 use App\Models\User;
 use App\Repositories\Interfaces\IUsersRepository;
+use Exception;
 
 class UsersRepository implements IUsersRepository
 {
     /**
      * @var User $user
      */
-    private User $user;
+    private User $model;
 
     public function __construct(User $model)
     {
@@ -26,7 +28,11 @@ class UsersRepository implements IUsersRepository
      */
     public function create($fields) : User
     {
-        $user = User::create($fields);
-        return $user;
+        try {
+            $user = $this->model->create($fields);
+            return $user;
+        } catch (Exception $err) {
+            throw new ApiException($err->getMessage(), 'We have an internal server error.');
+        }
     }
 }

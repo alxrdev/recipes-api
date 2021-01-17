@@ -2,10 +2,9 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Exceptions\ApiException;
+use App\Exceptions\AppException;
 use App\Models\User;
 use App\Repositories\Interfaces\IUsersRepository;
-use Exception;
 
 class UsersRepository implements IUsersRepository
 {
@@ -23,7 +22,7 @@ class UsersRepository implements IUsersRepository
      * Return an user by email
      * 
      * @param string $email User email
-     * @throws AppError
+     * @throws AppException
      * @return User $user
      */
     public function getByEmail(string $email) : User
@@ -31,7 +30,7 @@ class UsersRepository implements IUsersRepository
         $user = $this->model->where('email', $email);
 
         if ($user == null) {
-            throw new ApiException('Something went wrong :(', 'User not found.', 404);
+            throw new AppException('Something went wrong :(', 'User not found.', 404);
         }
 
         return $user;
@@ -41,13 +40,13 @@ class UsersRepository implements IUsersRepository
      * Method that creates a new user
      * 
      * @param array $fields User fields
-     * @throws AppError
+     * @throws AppException
      * @return User $user
      */
     public function create($fields) : User
     {
         if ($this->model->where('email', $fields['email']) !== null) {
-            throw new ApiException('The given data was invalid.', ['email' => 'The email has already been taken.'], 400);
+            throw new AppException('The given data was invalid.', ['email' => 'The email has already been taken.'], 400);
         }
 
         return $this->model->create($fields);

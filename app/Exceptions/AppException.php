@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ApiException extends Exception
+class AppException extends Exception
 {
     /**
      * @var int The status code

@@ -46,5 +46,7 @@ class Handler extends ExceptionHandler
         if ($e instanceof ApiException) {
             return $this->failure('Something went wrong :(', $e->getErrorDetails(), $e->getStatusCode());
         }
+
+        return parent::render($request, $e);
     }
 }

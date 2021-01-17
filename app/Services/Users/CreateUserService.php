@@ -2,11 +2,11 @@
 
 namespace App\Services\Users;
 
-use App\Http\Requests\Users\CreateUserRequest;
 use App\Models\User;
 use App\Repositories\Interfaces\IUsersRepository;
+use App\Services\Users\Interfaces\ICreateUserService;
 
-class CreateUserService 
+class CreateUserService implements ICreateUserService
 {
     /**
      * @var IUsersRepository
@@ -21,16 +21,13 @@ class CreateUserService
     /**
      * Executes the service
      * 
-     * @param CreateUserRequest $request
+     * @param array $fields User inputs
      * @throws AppError
      * @return User $user
      */
-    public function execute(CreateUserRequest $request) : User
+    public function execute(array $fields) : User
     {
-        $fields = $request->all();
-
-        $fields['password'] = bcrypt($request->password);
-
+        $fields['password'] = bcrypt($fields['password']);
         return $this->usersRepository->create($fields);
     }
 }

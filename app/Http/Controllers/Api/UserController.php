@@ -5,11 +5,22 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Users\CreateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\Users\CreateUserService;
+use App\Services\Users\Interfaces\ICreateUserService;
 use Exception;
 use Illuminate\Http\Request;
 
 class UserController extends ApiController
 {
+    /**
+     * @var ICreateUserService
+     */
+    private $createUserService;
+
+    public function __construct(ICreateUserService $createUserService)
+    {
+        $this->createUserService = $createUserService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,10 +38,10 @@ class UserController extends ApiController
      * @param CreateUserService $createUserService
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateUserRequest $request, CreateUserService $createUserService)
+    public function store(CreateUserRequest $request)
     {
         try {
-            $user = $createUserService->execute($request);
+            $user = $this->createUserService->execute($request->all());
             return response()
                 ->json([
                     'message' => 'User created successfully.',

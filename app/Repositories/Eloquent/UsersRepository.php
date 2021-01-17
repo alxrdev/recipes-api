@@ -27,7 +27,7 @@ class UsersRepository implements IUsersRepository
      */
     public function getByEmail(string $email) : User
     {
-        $user = $this->model->where('email', $email);
+        $user = $this->model->where('email', $email)->first();
 
         if ($user == null) {
             throw new AppException('Something went wrong :(', 'User not found.', 404);
@@ -45,7 +45,7 @@ class UsersRepository implements IUsersRepository
      */
     public function create($fields) : User
     {
-        if ($this->model->where('email', $fields['email']) !== null) {
+        if ($this->model->where('email', $fields['email'])->first() !== null) {
             throw new AppException('The given data was invalid.', ['email' => 'The email has already been taken.'], 400);
         }
 

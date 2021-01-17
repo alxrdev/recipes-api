@@ -42,19 +42,9 @@ class UserController extends ApiController
     {
         try {
             $user = $this->createUserService->execute($request->all());
-            return response()
-                ->json([
-                    'message' => 'User created successfully.',
-                    'data' => new UserResource($user)
-                ], 200);
+            return $this->success('User created successfully.', new UserResource($user), 201);
         } catch (Exception $err) {
-            return response()
-                ->json([
-                    'message' => 'Error on user creation.',
-                    'errors' => [
-                        'server' => $err->getMessage()
-                    ]
-                ], 500);
+            return $this->failure('Error on user creation.', $err->getMessage(), 500);
         }
     }
 

@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        if ($e instanceof AppException) {
+        if (($request->wantsJson() || $request->ajax()) && $e instanceof AppException) {
             return $this->failure('Something went wrong :(', $e->getErrorDetails(), $e->getStatusCode());
         }
 

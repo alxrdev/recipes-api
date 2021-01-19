@@ -35,4 +35,21 @@ class AuthControllerTest extends TestCase
             ]
         ]);
     }
+
+    /**
+     * @test
+     */
+    public function should_return_a_json_error_with_status_400_when_email_or_password_not_match()
+    {
+        $response = $this->postJson('/api/auth/login', [
+            'email' => 'user@gmail.com', 
+            'password' => 'invalid'
+        ]);
+
+        $response->assertStatus(401);
+        $response->assertJsonStructure([
+            'message',
+            'errors'
+        ]);
+    }
 }

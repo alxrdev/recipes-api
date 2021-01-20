@@ -20,7 +20,8 @@ class CreateRecipesTable extends Migration
             $table->text('description');
             $table->string('image');
             $table->string('preparation_time');
-            $table->string('ingredients');
+            $table->text('ingredients');
+            $table->text('steps');
             $table->integer('difficulty')->default(1);
             $table->timestamps();
 

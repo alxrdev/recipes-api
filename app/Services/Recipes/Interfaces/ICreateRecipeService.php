@@ -6,5 +6,5 @@ use App\Models\Recipe;
 
 interface ICreateRecipeService
 {
-    public function execute(array $fields) : Recipe;
+    public function execute(array $fields, array $files = []) : Recipe;
 }

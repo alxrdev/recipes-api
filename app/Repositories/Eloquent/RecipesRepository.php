@@ -50,7 +50,7 @@ class RecipesRepository implements IRecipesRepository
             $recipe = $this->model->create($fields);
             return $recipe;
         } catch (Exception $err) {
-            throw new AppException('Error trying to save the recipe.', $err->getMessage(), 500);
+            throw new AppException($err->getMessage(), 'Error trying to save the recipe.', 500);
         }
     }
 }

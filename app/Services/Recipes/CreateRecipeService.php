@@ -34,7 +34,7 @@ class CreateRecipeService implements ICreateRecipeService
         $fields['image'] = $this->handleRecipeImagesService->saveImage($files['image']);
 
         try {
-            $recipe = $this->recipesRepository->store($fields);
+            $recipe = $this->recipesRepository->save($fields);
             return $recipe;
         } catch (AppException $err) {
             $this->handleRecipeImagesService->deleteImage($fields['image']);

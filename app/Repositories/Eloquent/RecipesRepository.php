@@ -44,10 +44,28 @@ class RecipesRepository implements IRecipesRepository
      * @throws AppError
      * @return $recipe The recipe
      */
-    public function store(array $fields) : Recipe
+    public function save(array $fields) : Recipe
     {
         try {
             $recipe = $this->model->create($fields);
+            return $recipe;
+        } catch (Exception $err) {
+            throw new AppException($err->getMessage(), 'Error trying to save the recipe.', 500);
+        }
+    }
+
+    /**
+     * Method that update a recipe
+     * 
+     * @param array $fields The recipe fields
+     * @param int $id The recipe id
+     * @throws AppError
+     * @return Recipe $recipe The updated recipe
+     */
+    public function update(array $fields, int $id) : Recipe
+    {
+        try {
+            $recipe = $this->model->where('id', $id)->update($fields);
             return $recipe;
         } catch (Exception $err) {
             throw new AppException($err->getMessage(), 'Error trying to save the recipe.', 500);

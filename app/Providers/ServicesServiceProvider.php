@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Services\Auth\AuthenticateUserService;
 use App\Services\Auth\Interfaces\IAuthenticateUserService;
 use App\Services\Recipes\CreateRecipeService;
+use App\Services\Recipes\FindRecipeService;
 use App\Services\Recipes\Interfaces\ICreateRecipeService;
 use App\Services\Recipes\Interfaces\IHandleRecipeImagesService;
 use App\Services\Recipes\HandleRecipeImagesService;
+use App\Services\Recipes\Interfaces\IFindRecipeService;
 use App\Services\Recipes\Interfaces\IUpdateRecipeService;
 use App\Services\Recipes\UpdateRecipeService;
 use App\Services\Users\CreateUserService;
@@ -33,6 +35,7 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(ICreateRecipeService::class, CreateRecipeService::class);
         $this->app->bind(IUpdateRecipeService::class, UpdateRecipeService::class);
         $this->app->bind(IHandleRecipeImagesService::class, HandleRecipeImagesService::class);
+        $this->app->bind(IFindRecipeService::class, FindRecipeService::class);
     }
 
     /**

@@ -6,13 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Recipes\CreateRecipeRequest;
 use App\Http\Resources\RecipeResource;
 use App\Services\Recipes\Interfaces\ICreateRecipeService;
-use App\Services\Recipes\Interfaces\IHandleRecipeImagesService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
 {
     use ApiResponse;
+
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -33,7 +37,10 @@ class RecipeController extends Controller
     public function store(CreateRecipeRequest $request)
     {
         $recipe = app(ICreateRecipeService::class)->execute(
-            $request->only(['user_id', 'title', 'description', 'ingredients', 'steps', 'preparation_time', 'difficulty']),
+            array_merge(
+                $request->only(['title', 'description', 'ingredients', 'steps', 'preparation_time', 'difficulty']),
+                ['user_id' => $request->user()->id]
+            ),
             $request->allFiles()
         );
 

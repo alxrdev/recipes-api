@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Services\Auth\Interfaces\IAuthenticateUserService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -19,16 +20,47 @@ class RecipeControllerTest extends TestCase
 
         Storage::fake('local');
 
-        User::factory()->create();
+        User::factory()->create([
+            'email' => 'user@gmail.com'
+        ]);
+    }
+
+    /** @test */
+    public function should_not_allow_unauthenticated_users_to_create_a_recipe()
+    {
+        $response = $this->post(
+            '/api/recipes',
+            [
+                'title' => 'My recipe',
+                'description' => 'This is my recipe',
+                'preparation_time' => '00:30:00',
+                'ingredients' => 'ingredient1::ingredient1::ingredient3::ingredient4',
+                'steps' => '[{"position":1,"image":"step1","content":"this is the step 1"},{"position":2,"image":"step2","content":"this is the step 2"}]',
+                'difficulty' => 5,
+                'image' => UploadedFile::fake()->create('recipe.jpg', 0, 'image/jpeg'),
+                'step1' => UploadedFile::fake()->create('step1.jpg', 0, 'image/jpeg'),
+                'step2' => UploadedFile::fake()->create('step2.jpg', 0, 'image/jpeg')
+            ],
+            [
+                'Content-Type' => 'multipart/form-data',
+                'Accept' => 'application/json'
+            ]
+        );
+
+        $response->assertStatus(401);
+        $response->assertJsonStructure([
+            'message'
+        ]);
     }
 
     /** @test */
     public function should_fail_when_trying_to_create_a_recipe_with_an_invalid_data()
     {
+        app(IAuthenticateUserService::class)->execute(['email' => 'user@gmail.com', 'password' => 'password']);
+
         $response = $this->post(
             '/api/recipes',
             [
-                'user_id' => 1,
                 'title' => 'My recipe',
                 'description' => 'This is my recipe',
                 'preparation_time' => '00:30:68',
@@ -57,10 +89,11 @@ class RecipeControllerTest extends TestCase
     /** @test */
     public function should_create_a_new_recipe()
     {
+        app(IAuthenticateUserService::class)->execute(['email' => 'user@gmail.com', 'password' => 'password']);
+
         $response = $this->post(
             '/api/recipes',
             [
-                'user_id' => 1,
                 'title' => 'My recipe',
                 'description' => 'This is my recipe',
                 'preparation_time' => '00:30:00',

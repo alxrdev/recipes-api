@@ -48,6 +48,10 @@ class StepsRule implements Rule
 
     private function validateStep(array $step) : bool
     {
+        if ((count($step) !== 3)) {
+            return false;
+        }
+        
         if (!array_key_exists('position', $step) || !array_key_exists('image', $step) || !array_key_exists('content', $step)) {
             return false;
         }

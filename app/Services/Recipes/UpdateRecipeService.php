@@ -31,9 +31,11 @@ class UpdateRecipeService implements IUpdateRecipeService
      */
     public function execute(array $fields, array $files = []) : Recipe
     {
-        $this->handleRecipeImagesService->validateImages($files);
-        
         $recipeToUpdate = $this->recipesRepository->getById($fields['id']);
+
+        $this->checkRecipeOwner($recipeToUpdate->user_id, $fields['user_id']);
+
+        $this->handleRecipeImagesService->validateImages($files);
         
         $fields['image'] = $this->updateRecipeImage($recipeToUpdate->image, $files);
         $fields['steps'] = $this->updateStepsData($fields['steps'], $recipeToUpdate->steps, $files);
@@ -62,6 +64,21 @@ class UpdateRecipeService implements IUpdateRecipeService
             );
 
             throw $err;
+        }
+    }
+
+    /**
+     * Check if the current user is the recipe owner
+     * 
+     * @param int $recipeUserId The recipe user id
+     * @param int $currentUserId The id of the user
+     * @throws AppException
+     * @return void
+     */
+    private function checkRecipeOwner(int $recipeUserId, int $currentUserId) : void
+    {
+        if ($recipeUserId !== $currentUserId) {
+            throw new AppException('Unauthorized.', 'Unauthorized', 401);
         }
     }
 

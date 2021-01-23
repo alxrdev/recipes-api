@@ -101,6 +101,19 @@ class UpdateRecipeServiceTest extends TestCase
     }
 
     /** @test */
+    public function should_throws_an_AppException_when_the_user_is_not_the_owner_of_the_recipe()
+    {
+        $updateRecipeService = app(IUpdateRecipeService::class);
+
+        $fakeFields = $this->fakeFields;
+        $fakeFields['user_id'] = 2;
+
+        $this->expectException(AppException::class);
+
+        $updateRecipeService->execute($fakeFields, $this->fakeFiles);
+    }
+
+    /** @test */
     public function should_return_a_step_with_old_image_path_when_not_updating_the_image()
     {
         $updateRecipeService = app(IUpdateRecipeService::class);

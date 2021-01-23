@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Services\Users;
 
+use App\Exceptions\AppException;
 use App\Services\Recipes\Interfaces\IHandleRecipeImagesService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -81,5 +82,49 @@ class HandleRecipeImagesServiceTest extends TestCase
         $this->handleRecipeImagesService->deleteStepsImages($steps);
 
         Storage::disk('local')->assertMissing([$stepsStored[0]['image'], $stepsStored[1]['image']]);
+    }
+
+    /** @test */
+    public function should_throw_an_AppException_when_image_size_is_invalid()
+    {
+        $this->expectException(AppException::class);
+        
+        $this->handleRecipeImagesService->validateImages([
+            'step1' => UploadedFile::fake()->create('image1.jpg', 2001, 'image/jpeg'),
+            'step2' => UploadedFile::fake()->create('image2.jpg', 0, 'image/jpeg'),
+        ]);
+    }
+
+    /** @test */
+    public function should_throw_an_AppException_when_image_extension_is_invalid()
+    {
+        $this->expectException(AppException::class);
+        
+        $this->handleRecipeImagesService->validateImages([
+            'step1' => UploadedFile::fake()->create('image1.svg', 0, 'image/jpeg'),
+            'step2' => UploadedFile::fake()->create('image2.jpg', 0, 'image/jpeg'),
+        ]);
+    }
+
+    /** @test */
+    public function should_throw_an_AppException_when_the_mime_type_is_invalid()
+    {
+        $this->expectException(AppException::class);
+        
+        $this->handleRecipeImagesService->validateImages([
+            'step1' => UploadedFile::fake()->create('image1.jpg', 2000, 'image/svg'),
+            'step2' => UploadedFile::fake()->create('image2.jpg', 0, 'image/jpeg'),
+        ]);
+    }
+    
+    /** @test */
+    public function should_not_throw_when_the_image_is_valid()
+    {
+        $result = $this->handleRecipeImagesService->validateImages([
+            'step1' => UploadedFile::fake()->create('image1.jpg', 1900, 'image/jpeg'),
+            'step2' => UploadedFile::fake()->create('image2.jpg', 0, 'image/jpeg'),
+        ]);
+
+        $this->assertTrue($result);
     }
 }

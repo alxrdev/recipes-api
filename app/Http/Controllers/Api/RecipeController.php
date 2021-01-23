@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Recipes\CreateRecipeRequest;
 use App\Http\Resources\RecipeResource;
 use App\Services\Recipes\Interfaces\ICreateRecipeService;
+use App\Services\Recipes\Interfaces\IHandleRecipeImagesService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
@@ -31,16 +32,10 @@ class RecipeController extends Controller
      */
     public function store(CreateRecipeRequest $request)
     {
-        $createRecipeService = app(ICreateRecipeService::class);
-        $recipe = $createRecipeService->execute($request->only([
-            'user_id',
-            'title',
-            'description',
-            'ingredients',
-            'steps',
-            'preparation_time',
-            'difficulty'
-        ]), $request->allFiles());
+        $recipe = app(ICreateRecipeService::class)->execute(
+            $request->only(['user_id', 'title', 'description', 'ingredients', 'steps', 'preparation_time', 'difficulty']),
+            $request->allFiles()
+        );
 
         return $this->success('User created successfully.', new RecipeResource($recipe), 201);
     }

@@ -30,6 +30,8 @@ class CreateRecipeService implements ICreateRecipeService
      */
     public function execute(array $fields, array $files = []) : Recipe
     {
+        $this->handleRecipeImagesService->validateImages($files);
+
         $fields['steps'] = $this->handleRecipeImagesService->saveStepsImages($fields['steps'], $files);
         $fields['image'] = $this->handleRecipeImagesService->saveImage($files['image']);
 

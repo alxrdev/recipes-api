@@ -10,4 +10,6 @@ interface IHandleRecipeImagesService
     public function saveImage(UploadedFile $file) : string;
     public function deleteStepsImages(string $stepsJson) : void;
     public function deleteImage(string $path) : void;
+    public function validateImage(UploadedFile $file, string $fieldName) : bool;
+    public function validateImages(array $files) : bool;
 }

@@ -92,4 +92,49 @@ class HandleRecipeImagesService implements IHandleRecipeImagesService
             }
         }
     }
+
+    /**
+     * Method that validate a uploaded image
+     * 
+     * @param UploadFile $file The image uploaded
+     * @param string $fieldName The image field name
+     * @throws AppException
+     * @return true
+     */
+    public function validateImage(UploadedFile $file, string $fieldName): bool
+    {
+        if (empty($file->getClientOriginalName())) {
+            return true;
+        }
+        
+        if ($file->getSize() > 2000000) {
+            throw new AppException('Invalid image size.', [$fieldName => 'The image may not be greater than 2 Megabytes.'], 422);
+        }
+
+        if (!in_array($file->getMimeType(), ['image/jpeg', 'image/jpg', 'image/png'])) {
+            throw new AppException('Invalid image mime type.', [$fieldName => 'The image must be of type: jpg, jpeg, png.'], 422);
+        }
+
+        if (!in_array($file->getClientOriginalExtension(), ['jpeg', 'jpg', 'png'])) {
+            throw new AppException('Invalid image extension.', [$fieldName => 'The image must be of type: jpg, jpeg, png.'], 422);
+        }
+
+        return true;
+    }
+
+    /**
+     * Method that validate a uploaded image array
+     * 
+     * @param array $files The uploaded images
+     * @throws AppException
+     * @return true
+     */
+    public function validateImages(array $files): bool
+    {
+        foreach ($files as $fieldName => $file) {
+            $this->validateImage($file, $fieldName);
+        }
+
+        return true;
+    }
 }

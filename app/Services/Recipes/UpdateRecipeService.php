@@ -31,6 +31,8 @@ class UpdateRecipeService implements IUpdateRecipeService
      */
     public function execute(array $fields, array $files = []) : Recipe
     {
+        $this->handleRecipeImagesService->validateImages($files);
+        
         $recipeToUpdate = $this->recipesRepository->getById($fields['id']);
         
         $fields['image'] = $this->updateRecipeImage($recipeToUpdate->image, $files);

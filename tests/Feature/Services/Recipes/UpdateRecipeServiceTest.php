@@ -52,10 +52,10 @@ class UpdateRecipeServiceTest extends TestCase
         ];
 
         $this->fakeFiles = [
-            'image' => UploadedFile::fake()->create('image.jpg'),
-            'step1' => UploadedFile::fake()->create('image1.jpg'),
-            'step2' => UploadedFile::fake()->create('image2.jpg'),
-            'step3' => UploadedFile::fake()->create('image3.jpg')
+            'image' => UploadedFile::fake()->create('image.jpg', 0, 'image/jpeg'),
+            'step1' => UploadedFile::fake()->create('image1.jpg', 0, 'image/jpeg'),
+            'step2' => UploadedFile::fake()->create('image2.jpg', 0, 'image/jpeg'),
+            'step3' => UploadedFile::fake()->create('image3.jpg', 0, 'image/jpeg')
         ];
     }
 

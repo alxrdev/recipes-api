@@ -26,7 +26,6 @@ class CreateRecipeRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|integer',
             'title' => 'required|max:255',
             'description' => 'required',
             'ingredients' => 'required',

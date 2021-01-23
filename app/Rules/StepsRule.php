@@ -52,7 +52,11 @@ class StepsRule implements Rule
             return false;
         }
 
-        if (empty($step['position'] || empty($step['content']))) {
+        if (empty($step['position']) || empty($step['content'])) {
+            return false;
+        }
+
+        if ($step['position'] < 1) {
             return false;
         }
 

@@ -12,18 +12,19 @@ use Tests\TestCase;
 
 class CreateRecipeServiceTest extends TestCase
 {
+    private $recipesRepository;
+
     public function setUp() : void
     {
         parent::setUp();
 
-        $this->instance(
+        $this->recipesRepository = $this->instance(
             IRecipesRepository::class,
             Mockery::mock(IRecipesRepository::class, function (MockInterface $mock) {
                 $mock->shouldReceive('store')
-                    ->once()
                     ->andReturn(new Recipe());
-            }
-        ));
+            })
+        );
     }
 
     /**
@@ -32,6 +33,8 @@ class CreateRecipeServiceTest extends TestCase
     public function should_return_the_created_recipe()
     {
         $createRecipeService = app(ICreateRecipeService::class);
+
+        $this->recipesRepository->shouldReceive('save')->once();
 
         $recipe = $createRecipeService->execute(
         [

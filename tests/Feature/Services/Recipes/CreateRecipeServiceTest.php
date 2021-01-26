@@ -90,7 +90,7 @@ class CreateRecipeServiceTest extends TestCase
             Mockery::mock(IRecipesRepository::class, function (MockInterface $mock) {
                 $mock->shouldReceive('save')
                     ->once()
-                    ->andThrow(new AppException('User not found.', 'User not found. ', 404));
+                    ->andThrow(new AppException('User not found.', 'User not found.', 404));
             })
         );
 

@@ -4,17 +4,16 @@ namespace Tests\Feature\Services\Users;
 
 use App\Exceptions\AppException;
 use App\Models\Recipe;
-use App\Models\User;
+use App\Repositories\Interfaces\IRecipesRepository;
 use App\Services\Recipes\Interfaces\ICreateRecipeService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class CreateRecipeServiceTest extends TestCase
 {
-    use DatabaseMigrations;
-
     private $testData;
 
     public function setUp() : void
@@ -22,8 +21,6 @@ class CreateRecipeServiceTest extends TestCase
         parent::setUp();
 
         Storage::fake('local');
-
-        User::factory()->create();
 
         $this->testData = [
             [
@@ -47,6 +44,15 @@ class CreateRecipeServiceTest extends TestCase
     /** @test */
     public function should_create_a_new_recipe()
     {
+        $this->instance(
+            IRecipesRepository::class,
+            Mockery::mock(IRecipesRepository::class, function (MockInterface $mock) {
+                $mock->shouldReceive('save')
+                    ->once()
+                    ->andReturn(new Recipe());
+            })
+        );
+
         $createRecipeService = app(ICreateRecipeService::class);
 
         $recipe = $createRecipeService->execute($this->testData[0], $this->testData[1]);
@@ -57,6 +63,15 @@ class CreateRecipeServiceTest extends TestCase
     /** @test */
     public function should_throw_an_AppError_when_the_user_not_exists()
     {
+        $this->instance(
+            IRecipesRepository::class,
+            Mockery::mock(IRecipesRepository::class, function (MockInterface $mock) {
+                $mock->shouldReceive('save')
+                    ->once()
+                    ->andThrow(new AppException('User not found.', 'User not found.', 404));
+            })
+        );
+
         $createRecipeService = app(ICreateRecipeService::class);
 
         $this->expectException(AppException::class);
@@ -70,6 +85,15 @@ class CreateRecipeServiceTest extends TestCase
     /** @test */
     public function should_delete_all_images_if_an_error_occurs()
     {
+        $this->instance(
+            IRecipesRepository::class,
+            Mockery::mock(IRecipesRepository::class, function (MockInterface $mock) {
+                $mock->shouldReceive('save')
+                    ->once()
+                    ->andThrow(new AppException('User not found.', 'User not found.', 404));
+            })
+        );
+
         $createRecipeService = app(ICreateRecipeService::class);
 
         $data = $this->testData;
